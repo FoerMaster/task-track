@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 
 export interface Auth {
     user: User;
+    assigned_projects: Project[];
 }
 
 export interface BreadcrumbItem {
@@ -65,7 +66,7 @@ export interface Project {
     description: string;
     icon?: string;
     name: string;
-    shortName: string;
+    code_name: string;
     leader: User;
 }
 

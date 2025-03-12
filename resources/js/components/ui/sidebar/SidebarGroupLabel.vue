@@ -3,16 +3,22 @@ import { cn } from '@/lib/utils';
 import type { PrimitiveProps } from 'radix-vue';
 import { Primitive } from 'radix-vue';
 import type { HTMLAttributes } from 'vue';
+import { useSidebar } from '@/components/ui/sidebar/utils';
 
 const props = defineProps<
     PrimitiveProps & {
         class?: HTMLAttributes['class'];
     }
 >();
+
+const {
+    open
+} = useSidebar()
 </script>
 
 <template>
     <Primitive
+        v-if="open"
         data-sidebar="group-label"
         :as="as"
         :as-child="asChild"

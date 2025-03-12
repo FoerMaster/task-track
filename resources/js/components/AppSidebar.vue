@@ -8,22 +8,18 @@ import { Link } from '@inertiajs/vue3';
 import { GitForkIcon, ListCheck, SquareKanban, FolderOpenDot } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import NavProjectList from '@/components/NavProjectList.vue';
+import Notifications from '@/components/Notifications.vue';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Задачи',
+        title: 'Все задачи',
         href: '/dashboard',
         icon: ListCheck,
     },
     {
-        title: 'Доски',
+        title: 'Доски (TOOD)',
         href: '/agiles',
         icon: SquareKanban,
-    },
-    {
-        title: 'Проекты',
-        href: '/projects',
-        icon: FolderOpenDot,
     }
 ];
 
@@ -40,13 +36,13 @@ const projects: NavItem[] = [
     }
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Git репозиторий',
-        href: 'https://git.server-ru.ru/Foer/task-tracker',
-        icon: GitForkIcon,
-    },
-];
+// const footerNavItems: NavItem[] = [
+//     {
+//         title: 'Git репозиторий',
+//         href: 'https://git.server-ru.ru/Foer/task-tracker',
+//         icon: GitForkIcon,
+//     },
+// ];
 </script>
 
 <template>
@@ -69,8 +65,8 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
-            <NavUser />
+            <Notifications />
+            <NavUser  />
         </SidebarFooter>
     </Sidebar>
     <slot />
