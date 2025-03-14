@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use App\Models\ProjectRoles;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -44,7 +46,8 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
-                'assigned_projects' => Project::all(),
+                'assigned_projects' => $request->user()->projects()->get(),
+                'roles' => ProjectRoles::all(),
             ],
         ];
     }
