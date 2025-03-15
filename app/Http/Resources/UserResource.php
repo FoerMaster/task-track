@@ -13,6 +13,8 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            'full_name' => $this->full_name,
+            'avatar' => $this->avatar,
             // Добавьте другие необходимые поля
         ];
     }

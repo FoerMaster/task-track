@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 export interface Auth {
     user: User;
     assigned_projects: Pick<Project, 'id'|'name'|'code_name'>[];
+    users_list: User[];
 }
 
 export interface BreadcrumbItem {

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\ProjectRoles;
+use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -39,15 +40,19 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        $authProps = $request->user() ? [
+            'user' => $request->user(),
+            'assigned_projects' => $request->user()->projects()->get() ?? collect(),
+            'roles' => ProjectRoles::all(),
+            'users_list' => User::all()
+        ] : [];
 
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'auth' => [
-                'user' => $request->user(),
-                'assigned_projects' => $request->user()->projects()->get(),
-                'roles' => ProjectRoles::all(),
+            'auth' => $authProps,
+            'flash' => [
+                'message' => fn () => $request->session()->get('message')
             ],
         ];
     }

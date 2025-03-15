@@ -4,8 +4,7 @@ import {
     SidebarGroupContent,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar
+    SidebarMenuItem
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 
