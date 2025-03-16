@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\ProjectUsers;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -43,7 +44,8 @@ class ProjectController extends Controller
         return Inertia::render('Project', [
             'project' => new ProjectResource(
                 $project->load('users')
-            )
+            ),
+            'tasks' => Task::where('project_id',$project->id)->get()
         ]);
     }
 

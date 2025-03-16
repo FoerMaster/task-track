@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem, Project, type SharedData } from '@/types';
+import { type BreadcrumbItem, Project, type SharedData, Task } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import UserInfo from '@/components/UserInfo.vue';
 import { computed, ref } from 'vue';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, EllipsisVerticalIcon, Cog } from 'lucide-vue-next';
+import { PlusCircle, EllipsisVerticalIcon, Cog, Search } from 'lucide-vue-next';
 import AddProjectParticipant from '@/components/AddProjectParticipant.vue';
 
 import {
@@ -25,10 +25,13 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import InputError from '@/components/InputError.vue';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import TaskRow from '@/components/TaskRow.vue';
 
 const props = defineProps<{
     user: any
-    project: Project
+    project: Project,
+    tasks: Task[]
 }>()
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -229,6 +232,20 @@ function formatCodeName(event: any) {
                                 <DropdownMenuItem @click="removeParticiant(participant.user.id)" v-if="participant.role.id != 1 && (isOwner || participant.role.id != 2)"><span class="text-rose-500">Исключить из проекта</span></DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+                    </div>
+                </div>
+                <hr/>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-xl">
+                    <div class="flex flex-row gap-2">
+                        <input placeholder="Поиск" class="flex h-10 w-full rounded-md border transition-colors focus:duration-100 duration-500 focus:border-primary border-input bg-background px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" />
+                        <Button variant="outline" size="icon" class="h-10 w-11">
+                            <Search class="w-6 h-6" />
+                        </Button>
+                    </div>
+                    <div class="relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+                        <div class="flex flex-col divide-y">
+                            <TaskRow v-for="task in tasks" :key="task.id" :task="task" />
+                        </div>
                     </div>
                 </div>
             </div>

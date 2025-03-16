@@ -1,50 +1,45 @@
 <script setup lang="ts">
-import { Task } from '@/types';
-import Tag from '@/components/Tag.vue';
+import { Project, SharedData, Task, User } from '@/types';
 import { computed } from 'vue';
 import { formatDate } from '@/lib/datetime';
-import { Paperclip } from 'lucide-vue-next'
-const props = defineProps<{task: Task}>();
+import { getProjectById, getUserById } from '@/lib/utils';
+import { usePage } from '@inertiajs/vue3';
 
-const assinged = computed(()=> props.task.assigned.map((user) => user.fullName).join(", "))
-const createdAt = computed(()=> formatDate(props.task.created_at))
+const props = defineProps<{task: Task}>();
+const page = usePage<SharedData>();
+const project = getProjectById(props.task.project_id) as Project
+const creatorUser = getUserById(props.task.create_from) as User
+const currentStatus = page.props.auth.statuses.find((status)=>status.id == props.task.status)
+const currentType = page.props.auth.task_types.find((type)=>type.id == props.task.task_type)
+const createdAt = computed(() => formatDate(props.task.created_at))
 </script>
 
 <template>
-    <div class="flex flex-col gap-2 hover:bg-blue-500/10 dark:hover:bg-white/10 py-3 px-4 rounded">
+    <a :href="route('tasks.show',task.id)" class="flex flex-col gap-2 hover:bg-blue-500/10 dark:hover:bg-white/10 py-3 px-4 rounded">
         <div class="flex flex-row gap-3 font-semibold text-sm items-center">
-            <span class="text-xs dark:text-neutral-500">{{task.project.shortName}}-{{task.id}}</span>
-            <span class="text-primary">{{task.summary}}</span>
-            <div class="flex flex-row gap-1">
-                <Tag v-for="tag in task.tags" :key="tag.id" :tag="tag" />
-            </div>
-            <div class="flex flex-row gap-1.5 ms-auto items-center text-muted-foreground">
-                <span>{{task.attachments.length}}</span>
-                <Paperclip class="w-3.5 h-3.5"/>
-            </div>
-
+            <span class="text-xs dark:text-neutral-500">{{project.code_name}}-{{task.id}}</span>
+            <span class="text-primary">{{task.name}}</span>
         </div>
         <div class="flex flex-row gap-2 text-xs font-semibold text-muted-foreground">
 
             <div class="masked">
-                <span>{{task.project.name}}</span>
+                <span>{{project.name}}</span>
             </div>
 
             <div class="masked">
-            <span>{{task.state.name}}</span>
+                <span>{{currentStatus.name}}</span>
             </div>
             <div class="masked flex flex-row items-center gap-2">
-                <div class="w-2 h-2 rounded-full" :style="`background: ${task.type.color}`"></div>
-                <span :style="`color: ${task.type.color}`">{{task.type.name}}</span>
+                <div class="w-2 h-2 rounded-full" :style="`background: ${task.task_type}`"></div>
+                <span :style="`color: ${task.task_type}`">{{currentType.name}}</span>
             </div>
-                <div class="masked !w-32 !border-e-0">
-            <span v-if="task.assigned.length > 0" class="text-nowrap">{{assinged}}</span>
-            <span v-else class="text-nowrap">Нет отвественных</span>
-                </div>
-            <span class="ms-auto text-nowrap text-blue-500">{{task.initiator.fullName}}</span>
+            <div class="masked !w-32 !border-e-0">
+                <span class="text-nowrap">Нет отвественных</span>
+            </div>
+            <span class="ms-auto text-nowrap text-blue-500">{{creatorUser.full_name}}</span>
             <span>{{createdAt}}</span>
         </div>
-    </div>
+    </a>
 </template>
 
 <style scoped>
