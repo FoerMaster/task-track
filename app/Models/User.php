@@ -55,4 +55,24 @@ class User extends Authenticatable
             ->withPivot('role_id')
             ->using(ProjectUsers::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'create_from');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(TaskComment::class);
+    }
+
+    public function responsibleTasks()
+    {
+        return $this->belongsToMany(Task::class, 'responsible_user');
+    }
+
+    public function executorTasks()
+    {
+        return $this->belongsToMany(Task::class, 'executor_user');
+    }
 }

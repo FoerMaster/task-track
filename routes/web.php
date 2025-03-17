@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
+use \App\Http\Controllers\TaskCommentController;
+use App\Http\Resources\TaskShowResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,10 +39,17 @@ Route::get('create_task', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('projects', ProjectController::class);
-    Route::prefix('projects')->post('participant', [ProjectController::class, 'participantadd'])->name('projects.participant.add');
-    Route::prefix('projects')->post('participant/destroy', [ProjectController::class, 'participantdestroy'])->name('projects.participant.destroy');
-    Route::prefix('projects')->post('participant/update', [ProjectController::class, 'participantupdate'])->name('projects.participant.update');
+    Route::prefix('projects')->group(function () {
+        Route::post('participant', [ProjectController::class, 'participantadd'])->name('projects.participant.add');
+        Route::post('participant/destroy', [ProjectController::class, 'participantdestroy'])->name('projects.participant.destroy');
+        Route::post('participant/update', [ProjectController::class, 'participantupdate'])->name('projects.participant.update');
+    });
     Route::resource('tasks', TaskController::class);
+    Route::prefix('tasks')->group(function () {
+        Route::prefix('tasks')->resource('comment', TaskCommentController::class);
+    });
+
+
 });
 
 require __DIR__.'/settings.php';
