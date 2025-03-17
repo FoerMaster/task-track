@@ -13,7 +13,7 @@ const selectedItem = computed(()=>props.items.find((element) => element.id == mo
 <template>
     <div class="flex flex-col items-start gap-1">
         <Label class="text-sm font-normal opacity-70 me-1">{{label}}</Label>
-        <span @click="opened = true" class="text-sm !text-start">{{selectedItem ? (show ? selectedItem[show] : selectedItem['name']) : 'Не указано'}}</span>
+        <span @click="opened = true" class="cursor-pointer text-sm !text-start">{{selectedItem ? (show ? selectedItem[show] : selectedItem['name']) : 'Не указано'}}</span>
         <Popover v-model:open="opened">
             <PopoverTrigger>
 

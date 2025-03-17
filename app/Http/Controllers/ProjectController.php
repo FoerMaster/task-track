@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\TaskShowResource;
 use App\Models\Project;
 use App\Models\ProjectUsers;
 use App\Models\Task;
@@ -41,11 +42,12 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
+        $tasks = Task::where('project_id',$project->id)->with('responsibles', 'executors')->get();
         return Inertia::render('Project', [
             'project' => new ProjectResource(
                 $project->load('users')
             ),
-            'tasks' => Task::where('project_id',$project->id)->get()
+            'tasks' => TaskShowResource::collection($tasks)
         ]);
     }
 

@@ -70,6 +70,7 @@ const submit = async () => {
                         v-model="avatarFile"
                         :current-image="user.avatar"
                         class="mt-1"
+                        :error="('avatar' in page.props.errors) && page.props.errors.avatar"
                     />
                 </div>
                 <form @submit.prevent="submit" class="space-y-6">

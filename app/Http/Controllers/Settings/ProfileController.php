@@ -31,6 +31,13 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+
+        $request->user()->fill($request->validated());
+
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
+        }
+
         if (!empty($request->file('avatar'))) {
             $filename = uniqid() . '.webp';
 
@@ -40,11 +47,6 @@ class ProfileController extends Controller
             $request->user()->avatar = '/storage/avatars/' . $filename;
         }
 
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
 
         $request->user()->save();
 

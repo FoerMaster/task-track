@@ -1,0 +1,25 @@
+# Исключить зависимости PHP и Node.js
+vendor/
+node_modules/
+tests/
+.github/
+
+# Дополнительно (рекомендуемые исключения)
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Исключить логи и кэш
+*.log
+.cache
+.tmp
+
+# Исключить IDE-файлы
+.idea/
+.vscode/
+
+# Исключить environment-файлы (если не нужны в образе)
+.env
+.env.local

@@ -26,7 +26,7 @@ const submit = () => {
 
 <template>
     <AuthBase title="Создать аккаунт" description="Введите ваши данные для создания аккаунта">
-        <Head title="Register" />
+        <Head title="Регистрация" />
 
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-6">
@@ -84,7 +84,7 @@ const submit = () => {
             </div>
 
             <div class="text-center text-sm text-muted-foreground">
-                У вас уже есть аккаунт?
+                Уже есть аккаунт?
                 <TextLink :href="route('login')" class="underline underline-offset-4" :tabindex="6">Войти</TextLink>
             </div>
         </form>
