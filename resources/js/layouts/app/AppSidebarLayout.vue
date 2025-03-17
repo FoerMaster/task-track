@@ -18,6 +18,9 @@ withDefaults(defineProps<Props>(), {
     <AppShell variant="sidebar">
         <AppSidebar />
         <AppContent variant="sidebar">
+            <div class="w-full rounded-t-xl bg-rose-500 flex-row items-center justify-center p-2">
+                <p class="text-center text-xs">ДЕМО РЕЖИМ</p>
+            </div>
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
             <slot />
         </AppContent>
