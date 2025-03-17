@@ -236,12 +236,7 @@ function formatCodeName(event: any) {
                 </div>
                 <hr/>
                 <div class="flex h-full flex-1 flex-col gap-4 rounded-xl">
-                    <div class="flex flex-row gap-2">
-                        <input placeholder="Поиск" class="flex h-10 w-full rounded-md border transition-colors focus:duration-100 duration-500 focus:border-primary border-input bg-background px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" />
-                        <Button variant="outline" size="icon" class="h-10 w-11">
-                            <Search class="w-6 h-6" />
-                        </Button>
-                    </div>
+
                     <div class="relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
                         <div class="flex flex-col divide-y">
                             <TaskRow v-for="task in tasks" :key="task.id" :task="task" />
