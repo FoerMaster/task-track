@@ -32,7 +32,6 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         if (!empty($request->file('avatar'))) {
-            $image = $request->file('avatar');
             $filename = uniqid() . '.webp';
 
             $imagePath = storage_path('app/public/avatars/' . $filename);
