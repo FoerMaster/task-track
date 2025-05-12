@@ -3,7 +3,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 
 export interface Auth {
     user: User;
-    assigned_projects: Project[];
+    assigned_projects: Pick<Project, 'id'|'name'|'code_name'>[];
 }
 
 export interface BreadcrumbItem {
@@ -20,7 +20,6 @@ export interface NavItem {
 
 export interface SharedData extends PageProps {
     name: string;
-    quote: { message: string; author: string };
     auth: Auth;
 }
 
@@ -61,13 +60,18 @@ export interface Type {
     color: string;
 }
 
+
 export interface Project {
     id: number;
-    description: string;
-    icon?: string;
     name: string;
     code_name: string;
-    leader: User;
+    participants: {
+        user: Pick<User, 'id' | 'name' | 'email' | 'full_name'>;
+        role: {
+            id: number;
+            name: string;
+        };
+    }[];
 }
 
 export interface Task {

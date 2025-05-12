@@ -56,15 +56,15 @@ function formatCodeName(event: any) {
     <SidebarGroup class="px-2 py-0">
         <SidebarGroupLabel>{{ title }}</SidebarGroupLabel>
         <SidebarMenu>
-            <SidebarMenuItem v-for="item in projects" :key="item.name">
-                <SidebarMenuButton as-child :is-active="`/projects/${item.id}` === page.url">
-                    <Link :href="route('projects.show', item.id)" class="overflow-hidden">
+            <SidebarMenuItem v-for="project in projects" :key="project.id">
+                <SidebarMenuButton as-child :is-active="`/projects/${project.id}` === page.url">
+                    <Link :href="route('projects.show', project.id.toString())" class="overflow-hidden">
                         <span
                             :class="!open && '-mx-1'"
                             class="flex h-6 min-w-6 flex-row items-center justify-center rounded bg-primary text-xs font-semibold text-primary-foreground"
-                            >{{ item.name[0] }}</span
+                            >{{ project.name[0] }}</span
                         >
-                        <span v-if="open">{{ item.name }}</span>
+                        <span v-if="open">{{ project.name }}</span>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>

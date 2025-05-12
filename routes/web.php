@@ -11,10 +11,9 @@ Route::get('/', function () {
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('projects', function () {
-    return Inertia::render('Projects');
-})->middleware(['auth', 'verified'])->name('project.list');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('projects', ProjectController::class);
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

@@ -35,32 +35,14 @@ const usertest = page.props.auth.user as User;
     <Head :title="project.name" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
+        <pre>
+            {{project}}
+        </pre>
         <div class="flex flex-col p-5">
             <p><span class="opacity-50 text-sm">{{project.code_name}}</span> -  {{project.name}}</p>
             <div class="flex flex-col gap-3 rounded">
                 <p class="font-semibold text-lg">Участники проекта</p>
                 <div class="flex flex-col gap-3">
-                    <div class="flex flex-row gap-3">
-                        <UserInfo :user="usertest" showEmail />
-                    </div>
-                    <div class="flex flex-row gap-3">
-                        <UserInfo :user="usertest" showEmail />
-                    </div>
-                    <div class="flex flex-row gap-3">
-                        <UserInfo :user="usertest" showEmail />
-                    </div>
-                    <div class="flex flex-row gap-3">
-                        <UserInfo :user="usertest" showEmail />
-                    </div>
-                    <div class="flex flex-row gap-3">
-                        <UserInfo :user="usertest" showEmail />
-                    </div>
-                    <div class="flex flex-row gap-3">
-                        <UserInfo :user="usertest" showEmail />
-                    </div>
-                    <div class="flex flex-row gap-3">
-                        <UserInfo :user="usertest" showEmail />
-                    </div>
                     <div class="flex flex-row gap-3">
                         <UserInfo :user="usertest" showEmail />
                     </div>

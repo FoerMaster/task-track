@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use App\Models\ProjectUsers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -39,10 +41,15 @@ class ProjectController extends Controller
             ],
         ]);
 
-        Project::create([
+        $project = Project::create([
             'name' => $request->name,
             'code_name' => $request->code_name,
-            'owner_id' => $request->user()->id,
+        ]);
+
+        ProjectUsers::create([
+            'user_id' => $request->user()->id,
+            'project_id' => $project->id,
+            'role_id' => 1
         ]);
 
         return back();
@@ -53,8 +60,11 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+
         return Inertia::render('Project', [
-            'project' => $project
+            'project' => new ProjectResource(
+                $project->load('users')
+            )
         ]);
     }
 
