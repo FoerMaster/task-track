@@ -4,7 +4,6 @@ import laravel from 'laravel-vite-plugin';
 import path from 'path';
 import tailwindcss from 'tailwindcss';
 import { defineConfig } from 'vite';
-import * as fs from 'node:fs';
 
 export default defineConfig({
     plugins: [

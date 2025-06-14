@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
-import { type NavItem, type SharedData, type User } from '@/types';
+import { type NavItem, type SharedData } from '@/types';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-vue-next';
@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 defineProps<{
     items: NavItem[];

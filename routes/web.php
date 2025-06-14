@@ -13,6 +13,9 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('projects', ProjectController::class);
+    Route::prefix('projects')->post('participant', [ProjectController::class, 'participantadd'])->name('projects.participant.add');
+    Route::prefix('projects')->post('participant/destroy', [ProjectController::class, 'participantdestroy'])->name('projects.participant.destroy');
+    Route::prefix('projects')->post('participant/update', [ProjectController::class, 'participantupdate'])->name('projects.participant.update');
 });
 
 require __DIR__.'/settings.php';

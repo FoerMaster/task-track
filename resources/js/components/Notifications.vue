@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
-import { type SharedData } from '@/types';
-import { usePage } from '@inertiajs/vue3';
 import { Bell } from 'lucide-vue-next';
-
-const page = usePage<SharedData>();
 
 const {
     open
