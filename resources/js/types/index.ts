@@ -5,6 +5,14 @@ export interface Auth {
     user: User;
     assigned_projects: Pick<Project, 'id'|'name'|'code_name'>[];
     users_list: User[];
+    projects: Project[];
+    statuses: IdNameObject[];
+    task_types: IdNameObject[];
+}
+
+export interface IdNameObject {
+    id: number;
+    name: string;
 }
 
 export interface BreadcrumbItem {
@@ -77,16 +85,14 @@ export interface Project {
 
 export interface Task {
     id: number;
-    summary: string;
+    name: string;
     description: string;
-    attachments: Attachment[];
-    initiator: User;
-    updater?: User;
-    assigned: User[];
-    tags: Tag[];
-    state: State;
-    type: Type;
-    project: Project;
+    project_id: number;
+    status: number;
+    task_type: number;
+    updated_from?: any;
+    create_from: number;
+    deadline: string;
     created_at: string;
     updated_at: string;
 }

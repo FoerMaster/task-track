@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, Task } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-vue-next'
@@ -16,11 +16,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-defineProps<{
+const props =  defineProps<{
     user: any
+    tasks: Task[]
 }>()
 
-const taskList = computed(()=>tasks)
+const taskList = computed(()=>props.tasks)
 </script>
 
 <template>

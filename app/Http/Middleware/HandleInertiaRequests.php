@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\ProjectRoles;
+use App\Models\Status;
+use App\Models\TaskType;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -44,7 +46,10 @@ class HandleInertiaRequests extends Middleware
             'user' => $request->user(),
             'assigned_projects' => $request->user()->projects()->get() ?? collect(),
             'roles' => ProjectRoles::all(),
-            'users_list' => User::all()
+            'users_list' => User::all(),
+            'projects' => ProjectResource::collection(Project::all()),
+            'statuses' => Status::all(),
+            'task_types' => TaskType::all(),
         ] : [];
 
         return [
