@@ -16,7 +16,7 @@ const mainNavItems: NavItem[] = [
         icon: ListCheck,
     },
     {
-        title: 'Доски (TOOD)',
+        title: 'Доски',
         href: '/agiles',
         icon: SquareKanban,
     }
@@ -60,6 +60,7 @@ const projects: NavItem[] = [
 
         <SidebarContent>
             <NavMain title="Задачник" :items="mainNavItems" />
+
             <NavProjectList title="Проекты" :items="projects" />
         </SidebarContent>
 

@@ -7,6 +7,7 @@ import { computed } from 'vue';
 interface Props {
     user: Pick<User, 'avatar'|'name'|'full_name'>;
     showEmail?: boolean;
+    small?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,7 +21,7 @@ const showAvatar = computed(() => props.user.avatar && props.user.avatar !== '')
 </script>
 
 <template>
-    <Avatar class="h-8 w-8 overflow-hidden rounded-lg">
+    <Avatar class="h-8 w-8 overflow-hidden rounded-lg" :class="small && '!w-7 !h-7 ' ">
         <AvatarImage v-if="showAvatar && user.avatar" :src="user.avatar" :alt="user.name" />
         <AvatarFallback class="rounded-lg text-black dark:text-white">
             {{ getInitials(user.name) }}

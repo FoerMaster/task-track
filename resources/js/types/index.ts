@@ -83,6 +83,14 @@ export interface Project {
     }[];
 }
 
+interface TaskComment {
+    id: number;
+    task_id: number;
+    user_id: number;
+    comment: string;
+    created_at: string;
+}
+
 export interface Task {
     id: number;
     name: string;
@@ -95,6 +103,9 @@ export interface Task {
     deadline: string;
     created_at: string;
     updated_at: string;
+    responsibles: number[];
+    executors: number[];
+    comments: TaskComment[];
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;

@@ -38,5 +38,10 @@ class Statuses extends Seeder
                 'name' => "Done"
             ]
         );
+        Status::create(
+            [
+                'name' => "Canceled"
+            ]
+        );
     }
 }

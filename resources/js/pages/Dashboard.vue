@@ -7,7 +7,6 @@ import { Search } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button';
 import TaskRow from '@/components/TaskRow.vue';
 import { computed } from 'vue';
-import { tasks } from '@/lib/moked';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
