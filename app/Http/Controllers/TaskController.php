@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TaskShowResource;
 use App\Models\Task;
 use App\Models\TaskComment;
 use Illuminate\Http\Request;

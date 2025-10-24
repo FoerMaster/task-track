@@ -30,5 +30,10 @@ class Project extends Model
             'role_id'     // Внешний ключ в project_users
         );
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
 
