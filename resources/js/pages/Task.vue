@@ -14,6 +14,8 @@ import { toast } from '@/components/ui/toast';
 import { formatDate } from '@/lib/datetime';
 import TaskSideMultiSelector from '@/components/TaskSideMultiSelector.vue';
 import UserInfo from '@/components/UserInfo.vue';
+import { marked } from 'marked';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const props = defineProps<{
     task: Task;
@@ -80,6 +82,61 @@ watch(() => [taskModel.value.task_type, taskModel.value.status, taskModel.value.
 
 const comment = ref("");
 
+// Process checkboxes in the description
+const taskCheckboxes = computed(() => {
+    if (!taskModel.value.description) return [];
+
+    const checkboxRegex = /^\s*\[([\s*x])\]\s*(.+)$/gm;
+    const matches = Array.from(taskModel.value.description.matchAll(checkboxRegex));
+
+    return matches.map((match, index) => ({
+        id: index,
+        checked: match[1] === '*' || match[1] === 'x',
+        text: match[2].trim(),
+        original: match[0]
+    }));
+});
+
+// Modified description without checkbox lines
+const cleanDescription = computed(() => {
+    if (!taskModel.value.description) return '';
+
+    let desc = taskModel.value.description;
+    taskCheckboxes.value.forEach(checkbox => {
+        desc = desc.replace(checkbox.original, '');
+    });
+
+    // Remove any consecutive empty lines that might be left
+    return desc.replace(/\n{3,}/g, '\n\n').trim();
+});
+
+const formattedDescription = computed(() => {
+    if (editorMode.value) return taskModel.value.description;
+    return marked.parse(cleanDescription.value); // Convert clean Markdown to HTML
+});
+
+function toggleTaskCheckbox(index: number) {
+    if (editorMode.value) return;
+
+    const checkbox = taskCheckboxes.value[index];
+    const updatedDescription = taskModel.value.description.replace(
+        checkbox.original,
+        checkbox.original.replace(
+            checkbox.checked ? '[*]' : '[ ]',
+            checkbox.checked ? '[ ]' : '[*]'
+        )
+    );
+
+    router.patch(route('tasks.update', taskModel.value.id), {
+        description: updatedDescription
+    }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            taskModel.value.description = updatedDescription;
+        }
+    });
+}
+
 function sendComment() {
     router.post(route('comment.store'),{
         task_id: props.task.id,
@@ -90,6 +147,7 @@ function sendComment() {
         }
     })
 }
+const commnetsReversed = computed(()=> props.task.comments.reverse())
 </script>
 
 <template>
@@ -106,13 +164,32 @@ function sendComment() {
                 <Input v-if="editorMode" v-model="taskModel.name" placeholder="Заголовок задачи" />
                 <h1 v-else class="space-x-2 text-xl font-semibold">{{ taskModel.name }}</h1>
                 <Textarea v-if="editorMode" class="min-h-[300px]" autosize v-model="taskModel.description" placeholder="Подробное описание задачи" />
-                <div v-else class="content">{{ taskModel.description }}</div>
+                <template v-else>
+                    <!-- Regular markdown content -->
+                    <div class="content break-all" v-html="formattedDescription"></div>
+
+                    <!-- Task checklist section -->
+                    <div v-if="taskCheckboxes.length > 0" class="mt-4 rounded-lg border p-4">
+                        <h3 class="mb-2 font-medium">Подзадачи</h3>
+                        <div v-for="(checkbox, index) in taskCheckboxes" :key="`task-${index}`" class="flex items-start space-x-2 mb-2">
+                            <Checkbox
+                                :id="`task-${index}`"
+                                :checked="checkbox.checked"
+                                @update:checked="toggleTaskCheckbox(index)"
+                            />
+                            <label :for="`task-${index}`" class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" :class="{ 'line-through opacity-70': checkbox.checked }">
+                                {{ checkbox.text }}
+                            </label>
+                        </div>
+                    </div>
+                </template>
+                <p v-if="editorMode" class="italic text-rose-500 text-sm opacity-70">Чтобы добавить подзадачу или чекбокс в любом месте описания добавьте "[ ] Текст задачи"</p>
                 <p v-for="(error,key) in errors" :key="key" class="text-sm text-rose-600">{{error}}</p>
                 <span class="mt-3 text-sm opacity-50">Прикреплённые файлы</span>
                 <hr />
                 <span class="-т mt-3 text-sm opacity-50">Комментарии и история</span>
                 <p v-if="task.comments.length <= 0" class="py-4 text-center text-sm opacity-50">Нет комментариев</p>
-                <div v-for="comment in task.comments" :key="comment.id" class="flex flex-col gap-2 rounded-xl border border-t-0 border-b-0 border-e-0 p-2">
+                <div v-for="comment in commnetsReversed" :key="comment.id" class="flex flex-col gap-2 rounded-xl border border-t-0 border-b-0 border-e-0 p-2">
                     <div class="flex flex-row justify-between">
                         <div class="flex flex-row gap-2 items-center">
                             <UserInfo small :user="getUserById(comment.user_id) as User" show-email />
@@ -129,7 +206,7 @@ function sendComment() {
                     </Button>
                 </div>
             </div>
-            <div class="me-auto flex h-fit w-full flex-col gap-2 rounded border p-4 xl:w-64 shadow-md">
+            <div class="me-auto flex h-fit w-full flex-col gap-2 rounded border p-4 xl:w-64 shadow-md sticky top-5">
                 <TaskSideSelector label="Проект*" :items="page.props.auth.projects" v-model="taskModel.project_id" />
                 <TaskSideSelector label="Статус*" :items="page.props.auth.statuses" v-model="taskModel.status" />
                 <TaskSideSelector label="Тип*" :items="page.props.auth.task_types" v-model="taskModel.task_type" />
@@ -141,3 +218,89 @@ function sendComment() {
         </div>
     </AppLayout>
 </template>
+<style scoped>
+/* Apply deep styles to markdown content */
+::v-deep .content {
+    line-height: 1.6;
+}
+
+::v-deep .content h1, ::v-deep .content h2, ::v-deep .content h3, ::v-deep .content h4, ::v-deep .content h5, ::v-deep .content h6 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+::v-deep .content h1 {
+    font-size: 1.75rem;
+}
+
+::v-deep .content h2 {
+    font-size: 1.5rem;
+}
+
+::v-deep .content h3 {
+    font-size: 1.25rem;
+}
+
+::v-deep .content h4, ::v-deep .content h5, ::v-deep .content h6 {
+    font-size: 1rem;
+}
+
+::v-deep .content p {
+    margin: 0.5rem 0;
+}
+
+::v-deep .content a {
+    color: #1d72b8;
+    text-decoration: underline;
+}
+
+::v-deep .content a:hover {
+    color: #0f62a1;
+    text-decoration: none;
+}
+
+::v-deep .content ul, ::v-deep .content ol {
+    padding-left: 20px;
+}
+
+::v-deep .content li {
+    margin-bottom: 0.5rem;
+}
+
+::v-deep .content blockquote {
+    padding-left: 20px;
+    border-left: 4px solid #ccc;
+    margin: 1rem 0;
+    font-style: italic;
+}
+
+::v-deep .content code {
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+::v-deep .content pre code {
+    display: block;
+    padding: 10px;
+    background-color: #282c34;
+    color: white;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+::v-deep .content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+::v-deep .content hr {
+    border: 1px solid #ccc;
+    margin: 1rem 0;
+}
+</style>
