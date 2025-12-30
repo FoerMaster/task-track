@@ -46,10 +46,9 @@ export interface User {
 
 export interface Attachment {
     id: number;
-    fileName: string;
-    extension: string;
-    size: number;
-    directLink: string;
+    task_id: number;
+    file_name: string;
+    attachment_url: string;
 }
 
 export interface Tag {
@@ -106,6 +105,7 @@ export interface Task {
     responsibles: number[];
     executors: number[];
     comments: TaskComment[];
+    attachments: Attachment[];
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;

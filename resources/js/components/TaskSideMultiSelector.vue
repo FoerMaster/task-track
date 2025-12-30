@@ -10,7 +10,6 @@ const searchQuery = ref('');
 const model = defineModel<number[]>();
 const props = defineProps<{items: {id: number,name: string}[], label: string, show?: string}>()
 
-// Инициализация модели пустым массивом
 model.value ||= [];
 
 const selectedItems = computed(() =>

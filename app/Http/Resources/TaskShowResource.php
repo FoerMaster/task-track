@@ -14,6 +14,7 @@ class TaskShowResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -28,7 +29,8 @@ class TaskShowResource extends JsonResource
             'updated_at' => $this->updated_at,
             'responsibles' => $this->responsibles->pluck('id')->toArray(),
             'executors' => $this->executors->pluck('id')->toArray(),
-            'comments' => $this->comments
+            'comments' => $this->comments,
+            'attachments' => $this->attachments,
         ];
     }
 }

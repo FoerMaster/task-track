@@ -10,6 +10,7 @@ import TaskSideSelector from '@/components/TaskSideSelector.vue';
 import TaskSideMultiSelector from '@/components/TaskSideMultiSelector.vue';
 import TaskSideDateSelector from '@/components/TaskSideDateSelector.vue';
 import { toast } from '@/components/ui/toast';
+import { Upload, X } from 'lucide-vue-next';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -47,7 +48,9 @@ function submit() {
         project_id: taskModel.value.project,
         responsibles: taskModel.value.responsibles,
         executors: taskModel.value.executors,
+        files: files.value,
     },{
+        forceFormData: true,
         onError: (message) => {
             errors.value = message;
             toast({
@@ -57,6 +60,30 @@ function submit() {
             });
         }
     })
+}
+
+const files = ref<File[]>([]);
+const dropZone = ref<HTMLDivElement>();
+const isDragActive = ref(false);
+
+function onFileSelect(e: Event) {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.length) {
+        files.value = [...files.value, ...Array.from(input.files)];
+    }
+}
+
+function onDrop(e: DragEvent) {
+    e.preventDefault();
+    isDragActive.value = false;
+
+    if (e.dataTransfer?.files.length) {
+        files.value = [...files.value, ...Array.from(e.dataTransfer.files)];
+    }
+}
+
+function removeFile(index: number) {
+    files.value.splice(index, 1);
 }
 </script>
 
@@ -69,7 +96,53 @@ function submit() {
                 <Input v-model="taskModel.name" placeholder="Заголовок задачи" />
                 <Textarea class="min-h-[300px]" autosize v-model="taskModel.description" placeholder="Подробное описание задачи" />
                 <p v-for="(error,key) in errors" :key="key" class="text-sm text-rose-600">{{error}}</p>
-                <span class="mt-3 text-sm opacity-50">Прикреплённые файлы</span>
+                <div class="space-y-3">
+                    <span class="mt-3 text-sm opacity-50">Прикреплённые файлы</span>
+
+                    <!-- Область для drag'n'drop -->
+                    <div
+                        ref="dropZone"
+                        @dragover.prevent="isDragActive = true"
+                        @dragleave.prevent="isDragActive = false"
+                        @drop.prevent="onDrop"
+                        :class="[
+          'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer',
+          isDragActive ? 'border-primary bg-primary/10' : 'border-muted-foreground/30'
+        ]"
+                        @click="$refs.fileInput.click()"
+                    >
+                        <Upload class="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                        <p class="text-sm text-muted-foreground">
+                            Перетащите файлы сюда или кликните для выбора
+                        </p>
+                        <input
+                            ref="fileInput"
+                            type="file"
+                            multiple
+                            class="hidden"
+                            @change="onFileSelect"
+                        />
+                    </div>
+
+                    <!-- Список выбранных файлов -->
+                    <div v-if="files.length" class="space-y-2">
+                        <div
+                            v-for="(file, index) in files"
+                            :key="file.name + index"
+                            class="flex items-center justify-between p-2 border rounded"
+                        >
+                            <span class="text-sm truncate">{{ file.name }}</span>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                class="h-8 w-8 p-0"
+                                @click.stop="removeFile(index)"
+                            >
+                                <X class="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
                 <hr />
             </div>
             <div class="flex flex-col gap-2 me-auto rounded border p-4 h-fit xl:w-64 w-full">

@@ -69,7 +69,6 @@ const projects = computed(() => {
     return Array.from(uniqueProjects.values());
 });
 
-// Drag and drop functionality
 const draggedTask = ref<Task | null>(null);
 const dragOverStatus = ref<number | null>(null);
 
@@ -169,7 +168,6 @@ function getDeadlineClass(task: Task) {
     return '';
 }
 
-// Логика сворачивания колонок (по ширине)
 const collapsedColumns = ref<Record<number, boolean>>({});
 
 onMounted(() => {
@@ -201,7 +199,6 @@ watch(
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <!-- Kanban Board -->
             <div class="flex flex-1 gap-4 overflow-x-auto pb-4">
                 <div
                     v-for="status in page.props.auth.statuses"
@@ -214,14 +211,12 @@ watch(
                 >
                     <div class="mb-3 flex items-center justify-between p-2">
                         <div class="flex items-center gap-2">
-                            <!-- Если колонка свернута, показываем только первую букву заголовка -->
                             <h3 class="font-medium" v-if="!collapsedColumns[status.id]">
                                 {{ status.name }}
                             </h3>
                             <h3 class="font-medium" v-else>
                                 {{ status.name.charAt(0) }}
                             </h3>
-                            <!-- Кнопка сворачивания/разворачивания -->
                             <button
                                 @click="toggleCollapse(status.id)"
                                 class="text-xs text-muted-foreground focus:outline-none"
@@ -234,10 +229,7 @@ watch(
                             {{ tasksByStatus[status.id]?.length || 0 }}
                         </span>
                     </div>
-
-                    <!-- Если колонка развернута, показываем задачи -->
                     <div v-if="!collapsedColumns[status.id]" class="flex flex-col gap-2">
-                        <!-- Ghost Task Preview -->
                         <div
                             v-if="renderGhostTask(status.id)"
                             class="flex flex-col gap-2 rounded-lg bg-background/70 p-3 shadow-sm border-2 border-dashed border-primary/50 animate-pulse"
@@ -280,8 +272,6 @@ watch(
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Actual Tasks -->
                         <div
                             v-for="task in tasksByStatus[status.id]"
                             :key="task.id"
@@ -291,7 +281,6 @@ watch(
                             class="cursor-move transition-all duration-200"
                             :class="{ 'opacity-40': draggedTask && draggedTask.id === task.id }"
                         >
-                            <!-- Открытие задачи в новой вкладке -->
                             <a :href="route('tasks.show', task.id)" target="_blank" class="block">
                                 <div
                                     class="flex flex-col gap-2 rounded-lg bg-background p-3 shadow-sm border"
@@ -359,8 +348,6 @@ watch(
                                 </div>
                             </a>
                         </div>
-
-                        <!-- Empty state -->
                         <div
                             v-if="(!tasksByStatus[status.id] || tasksByStatus[status.id].length === 0) && !renderGhostTask(status.id)"
                             class="flex h-20 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground"

@@ -14,8 +14,14 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('dashboard', function () {
-    $tasks = Task::with('responsibles', 'executors')->get();
-    return Inertia::render('Dashboard',['tasks'=> TaskShowResource::collection($tasks)]);
+    $tasks = Task::with('responsibles', 'executors')->paginate(15);
+
+    return Inertia::render('Dashboard', [
+        'tasks' => TaskShowResource::collection($tasks->items()), // Передаем только данные текущей страницы
+        'totalItems' => $tasks->total(), // Общее количество страниц
+        'perPage' => $tasks->perPage(), // Текущая страница
+        'currentPage' => $tasks->currentPage(),
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('agiles', function (Request $request) {
@@ -46,7 +52,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     Route::resource('tasks', TaskController::class);
     Route::prefix('tasks')->group(function () {
-        Route::prefix('tasks')->resource('comment', TaskCommentController::class);
+        Route::resource('comment', TaskCommentController::class);
+        Route::post('attachment', [TaskController::class, 'attachmentadd'])->name('tasks.attachment.add');
+        Route::delete('attachment/destroy', [TaskController::class, 'attachmentdestroy'])->name('tasks.attachment.destroy');
     });
 
 

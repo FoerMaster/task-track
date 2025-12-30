@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\TaskShowResource;
+use App\Models\Status;
 use App\Models\Task;
+use App\Models\TaskAttach;
 use App\Models\TaskComment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class TaskController extends Controller
@@ -42,6 +45,8 @@ class TaskController extends Controller
             'responsibles.*' => 'exists:users,id',
             'executors' => 'nullable|array',
             'executors.*' => 'exists:users,id',
+            'files' => 'nullable|array',
+            'files.*' => 'file|max:4096|not_in:php,phar,html,htm,js,exe,bat,sh,phtml,asp,aspx,jsp,jar',
         ], [
             'name.required' => 'Название задачи обязательно для заполнения.',
             'name.string' => 'Название задачи должно быть строкой.',
@@ -61,6 +66,9 @@ class TaskController extends Controller
             'responsibles.*.exists' => 'Выбранный ответственный недопустим.',
             'executors.array' => 'Исполнители должны быть переданы в виде массива.',
             'executors.*.exists' => 'Выбранный исполнитель недопустим.',
+            'files.array' => 'Файлы должны быть переданы в виде массива',
+            'files.*.file' => 'Каждый элемент должен быть файлом',
+            'files.*.max' => 'Размер файла не должен превышать 4 МБ',
         ]);
 
         $task = Task::create([
@@ -81,6 +89,25 @@ class TaskController extends Controller
             $task->executors()->attach($request->executors);
         }
 
+        $uploadedFiles = [];
+
+        foreach ($request->file('files') as $file) {
+            // Генерируем уникальное имя файла
+            $fileName = uniqid() . '_' . $file->getClientOriginalName();
+
+            // Сохраняем файл в storage/app/public/uploads
+            $path = $file->storeAs('uploads', $fileName, 'public');
+
+            // Получаем публичный URL
+            //$url = Storage::disk('public')->url($path, );
+
+            // Сохраняем в базу данных
+            TaskAttach::create([
+                'task_id' => $task->id,
+                'file_name' => $file->getClientOriginalName(),
+                'attachment_url' =>  'storage/' . $path,
+            ]);
+        }
 //        $task->save();
 
         return redirect()->route('tasks.show', $task);
@@ -91,7 +118,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $task->load('responsibles:id', 'executors:id', 'comments');
+        $task->load('responsibles:id', 'executors:id', 'comments', 'attachments');
         return Inertia::render('Task',
             [
                 'task' => new TaskShowResource($task),
@@ -135,6 +162,16 @@ class TaskController extends Controller
         $toUpdate = $request->only($task->getFillable());
         $toUpdate['updated_from'] = $request->user()->id;
 
+        if ($request->status && $request->status != $task->status) {
+            $fromStatus = Status::find($task->status);
+            $toStatus = Status::find($request->status);
+            TaskComment::create([
+                "task_id" => $task->id,
+                "user_id" => $request->user()->id,
+                "comment" => '![ACTION] Изменил статус с <span class="text-rose-500">'.$fromStatus->name.'</span> на <span class="text-rose-500">'.$toStatus->name.'</span>',
+            ]);
+        }
+
         $task->update($toUpdate);
 
         if ($request->has('responsibles')) {
@@ -158,6 +195,64 @@ class TaskController extends Controller
             }
         }
 
+
+
+
         return back()->with('message','Вы успешно обновили информацию по данной задаче');
+    }
+
+    public function attachmentadd(Request $request)
+    {
+        $uploadedFiles = [];
+
+        foreach ($request->file('files') as $file) {
+            // Генерируем уникальное имя файла
+            $request->validate([
+                'task_id' => 'required|exists:tasks,id',
+                'files' => 'nullable|array',
+                'files.*' => [
+                    'required',
+                    'file',
+                    'max:2048',
+                    // Запрещаем расширения через closure
+                    function ($attribute, $value, $fail) {
+                        $forbiddenExtensions = ['php', 'html', 'js', 'exe', 'bat', 'sh'];
+                        $extension = strtolower($value->getClientOriginalExtension());
+
+                        if (in_array($extension, $forbiddenExtensions)) {
+                            $fail("Файлы с расширением .$extension запрещены!");
+                        }
+                    },
+                ],
+            ]);
+            $fileName = uniqid() . '_' . $file->getClientOriginalName();
+
+            // Сохраняем файл в storage/app/public/uploads
+            $path = $file->storeAs('uploads', $fileName, 'public');
+
+            // Получаем публичный URL
+            //$url = Storage::disk('public')->url($path, );
+
+            // Сохраняем в базу данных
+            TaskAttach::create([
+                'task_id' => $request->task_id,
+                'file_name' => $file->getClientOriginalName(),
+                'attachment_url' => 'storage/' . $path,
+            ]);
+        }
+
+        return back();
+    }
+
+    public function attachmentdestroy(Request $request)
+    {
+
+        $attach = TaskAttach::find($request->attachment_id);
+
+        Storage::disk('public')->delete(str_replace('storage/', '',$attach->attachment_url));
+        $attach->delete();
+        /// storage/uploads/67d85eef265b4_20101219200306!Stockbroker's_Scarf.png
+        //TaskAttach::destroy($request->id);
+
     }
 }

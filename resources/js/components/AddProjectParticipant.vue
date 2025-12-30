@@ -26,11 +26,9 @@ const filteredUsers = computed((): User[] => {
     const users = page.props.auth.users_list as User[]
 
     return users.filter(user =>
-        // Exclude users already in participants
         !props.ignoreUsers.some((participant: any) =>
             participant.user.id === user.id
         ) &&
-        // Include only users matching search query
         (
             user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
             user.full_name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||

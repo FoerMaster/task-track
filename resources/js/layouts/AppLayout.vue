@@ -14,10 +14,9 @@ withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
 });
 
-// Получаем флеш-сообщения
+
 const flash = computed(() => usePage().props.flash);
 
-// Следим за изменениями флеш-сообщений
 watch(
     () => flash.value,
     (newVal) => {
