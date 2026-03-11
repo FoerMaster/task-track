@@ -10,9 +10,7 @@ import { Head, Link } from '@inertiajs/vue3';
             <div class="space-y-2">
                 <p class="text-sm uppercase tracking-wide text-neutral-500">Abris</p>
                 <h1 class="text-2xl font-semibold">Task management for teams</h1>
-                <p class="text-sm text-neutral-600 dark:text-neutral-400">
-                    Sign in to your workspace or create an account to get started.
-                </p>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400">Sign in to your workspace or create an account to get started.</p>
             </div>
 
             <div class="flex gap-3">

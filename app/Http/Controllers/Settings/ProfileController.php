@@ -22,7 +22,7 @@ class ProfileController extends Controller
         return Inertia::render('settings/Profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
-            'timezones' => timezone_identifiers_list()
+            'timezones' => timezone_identifiers_list(),
         ]);
     }
 
@@ -38,15 +38,14 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
-        if (!empty($request->file('avatar'))) {
-            $filename = uniqid() . '.webp';
+        if (! empty($request->file('avatar'))) {
+            $filename = uniqid().'.webp';
 
-            $imagePath = storage_path('app/public/avatars/' . $filename);
+            $imagePath = storage_path('app/public/avatars/'.$filename);
 
             Image::read($request->file('avatar'))->scale(512, 512)->save($imagePath);
-            $request->user()->avatar = '/storage/avatars/' . $filename;
+            $request->user()->avatar = '/storage/avatars/'.$filename;
         }
-
 
         $request->user()->save();
 

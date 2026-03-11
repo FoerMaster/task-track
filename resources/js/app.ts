@@ -6,7 +6,6 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
-import { CkeditorPlugin } from '@ckeditor/ckeditor5-vue';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -29,7 +28,6 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(CkeditorPlugin)
             .use(ZiggyVue)
             .mount(el);
     },

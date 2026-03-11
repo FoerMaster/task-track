@@ -1,10 +1,9 @@
 <script setup lang="ts">
+import { toast, Toaster } from '@/components/ui/toast';
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
+import { BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
-import { toast } from '@/components/ui/toast';
-import { Toaster } from '@/components/ui/toast';
-import { BreadcrumbItemType } from '@/types';
 
 interface Props {
     breadcrumbs?: BreadcrumbItemType[];
@@ -13,7 +12,6 @@ interface Props {
 withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
 });
-
 
 const flash = computed(() => usePage().props.flash);
 
@@ -36,7 +34,7 @@ watch(
             });
         }
     },
-    { deep: true }
+    { deep: true },
 );
 </script>
 

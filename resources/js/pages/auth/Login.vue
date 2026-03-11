@@ -48,6 +48,7 @@ const submit = () => {
                         autocomplete="email"
                         v-model="form.email"
                         placeholder="email@example.com"
+                        data-testid="login-email"
                     />
                     <InputError :message="form.errors.email" />
                 </div>
@@ -55,9 +56,7 @@ const submit = () => {
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between">
                         <Label for="password">Пароль</Label>
-                        <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-sm" :tabindex="5">
-                            Забыли пароль?
-                        </TextLink>
+                        <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-sm" :tabindex="5"> Забыли пароль? </TextLink>
                     </div>
                     <Input
                         id="password"
@@ -67,6 +66,7 @@ const submit = () => {
                         autocomplete="current-password"
                         v-model="form.password"
                         placeholder="Пароль"
+                        data-testid="login-password"
                     />
                     <InputError :message="form.errors.password" />
                 </div>
@@ -78,7 +78,7 @@ const submit = () => {
                     </Label>
                 </div>
 
-                <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="form.processing">
+                <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="form.processing" data-testid="login-submit">
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
                     Войти
                 </Button>

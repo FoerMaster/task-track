@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Project, SharedData, Task, User } from '@/types';
-import { computed } from 'vue';
 import { formatDate } from '@/lib/datetime';
 import { getProjectById, getUserById } from '@/lib/utils';
+import { Project, SharedData, Task, User } from '@/types';
 import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps<{ task: Task }>();
 const page = usePage<SharedData>();
@@ -19,7 +19,7 @@ const executors = computed(() => {
 </script>
 
 <template>
-    <a :href="route('tasks.show', task.id)" class="flex flex-col gap-2 rounded px-4 py-3 hover:bg-blue-500/10 dark:hover:bg-white/10 ">
+    <a :href="route('tasks.show', task.id)" class="flex flex-col gap-2 rounded px-4 py-3 hover:bg-blue-500/10 dark:hover:bg-white/10">
         <div class="flex flex-row items-center gap-3 text-sm font-semibold" :class="task.status == 5 && 'line-through'">
             <span class="text-xs dark:text-neutral-500">{{ project.code_name }}-{{ task.id }}</span>
             <span class="text-primary">{{ task.name }}</span>
@@ -38,11 +38,11 @@ const executors = computed(() => {
             </div>
             <div class="masked !w-32 !border-e-0">
                 <span v-if="executors.length <= 0" class="text-nowrap">Нет исполнителей</span>
-                <span v-else class="text-nowrap">{{executors.join(', ')}}</span>
+                <span v-else class="text-nowrap">{{ executors.join(', ') }}</span>
             </div>
             <div class="masked !w-32 !border-e-0">
                 <span v-if="executors.length <= 0" class="text-nowrap">Нет отвественных</span>
-                <span v-else class="text-nowrap">{{executors.join(', ')}}</span>
+                <span v-else class="text-nowrap">{{ executors.join(', ') }}</span>
             </div>
             <span class="ms-auto text-nowrap text-blue-500">{{ creatorUser.full_name }}</span>
             <span>{{ createdAt }}</span>

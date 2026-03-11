@@ -3,7 +3,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 
 export interface Auth {
     user: User;
-    assigned_projects: Pick<Project, 'id'|'name'|'code_name'>[];
+    assigned_projects: Pick<Project, 'id' | 'name' | 'code_name'>[];
     users_list: User[];
     projects: Project[];
     statuses: IdNameObject[];
@@ -67,7 +67,6 @@ export interface Type {
     name: string;
     color: string;
 }
-
 
 export interface Project {
     id: number;

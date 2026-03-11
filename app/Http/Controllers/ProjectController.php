@@ -34,7 +34,7 @@ class ProjectController extends Controller
         ProjectUsers::create([
             'user_id' => $request->user()->id,
             'project_id' => $project->id,
-            'role_id' => 1
+            'role_id' => 1,
         ]);
 
         return back()->with('message', 'Проект успешно создан');
@@ -42,12 +42,13 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $tasks = Task::where('project_id',$project->id)->with('responsibles', 'executors')->get();
+        $tasks = Task::where('project_id', $project->id)->with('responsibles', 'executors')->get();
+
         return Inertia::render('Project', [
             'project' => new ProjectResource(
                 $project->load('users')
             ),
-            'tasks' => TaskShowResource::collection($tasks)
+            'tasks' => TaskShowResource::collection($tasks),
         ]);
     }
 
@@ -57,7 +58,7 @@ class ProjectController extends Controller
             ->where('user_id', $request->user()->id)
             ->value('role_id');
 
-        if (!in_array($userRole, [1, 2])) {
+        if (! in_array($userRole, [1, 2])) {
             return back()->with('error', 'Недостаточно прав для обновления проекта');
         }
 
@@ -74,9 +75,10 @@ class ProjectController extends Controller
 
         try {
             $project->update($request->only(['name', 'code_name']));
+
             return back()->with('message', 'Проект успешно обновлен');
         } catch (\Exception $e) {
-            return back()->with('error', 'Ошибка при обновлении проекта: ' . $e->getMessage());
+            return back()->with('error', 'Ошибка при обновлении проекта: '.$e->getMessage());
         }
     }
 
@@ -93,7 +95,7 @@ class ProjectController extends Controller
             ->where('user_id', $request->user()->id)
             ->value('role_id');
 
-        if (!in_array($currentUserRole, [1, 2])) {
+        if (! in_array($currentUserRole, [1, 2])) {
             return back()->with('error', 'Недостаточно прав для добавления участника');
         }
 
@@ -106,7 +108,7 @@ class ProjectController extends Controller
         ProjectUsers::create([
             'user_id' => $request->user_id,
             'project_id' => $project->id,
-            'role_id' => 3
+            'role_id' => 3,
         ]);
 
         return back()->with('message', 'Участник добавлен');
@@ -155,7 +157,7 @@ class ProjectController extends Controller
             ->where('user_id', $request->user()->id)
             ->value('role_id');
 
-        if (!in_array($currentUserRole, [1, 2])) {
+        if (! in_array($currentUserRole, [1, 2])) {
             return back()->with('error', 'Недостаточно прав для изменения роли');
         }
 

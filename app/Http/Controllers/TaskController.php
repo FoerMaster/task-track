@@ -102,13 +102,13 @@ class TaskController extends Controller
 
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
-                $fileName = uniqid() . '_' . $file->getClientOriginalName();
+                $fileName = uniqid().'_'.$file->getClientOriginalName();
                 $path = $file->storeAs('uploads', $fileName, 'public');
 
                 TaskAttach::create([
                     'task_id' => $task->id,
                     'file_name' => $file->getClientOriginalName(),
-                    'attachment_url' => 'storage/' . $path,
+                    'attachment_url' => 'storage/'.$path,
                 ]);
             }
         }
@@ -122,6 +122,7 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         $task->load('responsibles:id', 'executors:id', 'comments', 'attachments');
+
         return Inertia::render('Task',
             [
                 'task' => new TaskShowResource($task),
@@ -169,9 +170,9 @@ class TaskController extends Controller
             $fromStatus = Status::find($task->status);
             $toStatus = Status::find($request->status);
             TaskComment::create([
-                "task_id" => $task->id,
-                "user_id" => $request->user()->id,
-                "comment" => '![ACTION] Изменил статус с <span class="text-rose-500">'.$fromStatus->name.'</span> на <span class="text-rose-500">'.$toStatus->name.'</span>',
+                'task_id' => $task->id,
+                'user_id' => $request->user()->id,
+                'comment' => '![ACTION] Изменил статус с <span class="text-rose-500">'.$fromStatus->name.'</span> на <span class="text-rose-500">'.$toStatus->name.'</span>',
             ]);
         }
 
@@ -198,10 +199,7 @@ class TaskController extends Controller
             }
         }
 
-
-
-
-        return back()->with('message','Вы успешно обновили информацию по данной задаче');
+        return back()->with('message', 'Вы успешно обновили информацию по данной задаче');
     }
 
     public function attachmentadd(Request $request)
@@ -224,13 +222,13 @@ class TaskController extends Controller
         ]);
 
         foreach ($request->file('files') as $file) {
-            $fileName = uniqid() . '_' . $file->getClientOriginalName();
+            $fileName = uniqid().'_'.$file->getClientOriginalName();
             $path = $file->storeAs('uploads', $fileName, 'public');
 
             TaskAttach::create([
                 'task_id' => $request->task_id,
                 'file_name' => $file->getClientOriginalName(),
-                'attachment_url' => 'storage/' . $path,
+                'attachment_url' => 'storage/'.$path,
             ]);
         }
 
@@ -245,7 +243,7 @@ class TaskController extends Controller
 
         $attach = TaskAttach::find($request->attachment_id);
 
-        if (!$attach) {
+        if (! $attach) {
             return back()->with('error', 'Вложение не найдено');
         }
 

@@ -4,15 +4,15 @@ import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 
 import DeleteUser from '@/components/DeleteUser.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import ImageSelector from '@/components/ImageSelector.vue';
 import InputError from '@/components/InputError.vue';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem, type SharedData, type User } from '@/types';
-import ImageSelector from '@/components/ImageSelector.vue';
 import { ref } from 'vue';
 
 interface Props {
@@ -41,7 +41,6 @@ const form = useForm({
 });
 
 const submit = async () => {
-
     form.patch(route('profile.update'), {
         preserveScroll: true,
         onSuccess: () => {
@@ -49,7 +48,7 @@ const submit = async () => {
                 router.post(route('profile.update'), {
                     _method: 'patch',
                     avatar: avatarFile.value,
-                    ...form.data()
+                    ...form.data(),
                 });
             }
         },
@@ -70,7 +69,7 @@ const submit = async () => {
                         v-model="avatarFile"
                         :current-image="user.avatar"
                         class="mt-1"
-                        :error="('avatar' in page.props.errors) && page.props.errors.avatar"
+                        :error="'avatar' in page.props.errors && page.props.errors.avatar"
                     />
                 </div>
                 <form @submit.prevent="submit" class="space-y-6">
@@ -113,9 +112,7 @@ const submit = async () => {
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectItem v-for="timezone in timezones" :key="timezone" :value="timezone">
-
                                         {{ timezone }}
-
                                     </SelectItem>
                                 </SelectGroup>
                             </SelectContent>

@@ -16,7 +16,7 @@ class Task extends Model
         'task_type',
         'create_from',
         'deadline',
-        'updated_from'
+        'updated_from',
     ];
 
     public function project()

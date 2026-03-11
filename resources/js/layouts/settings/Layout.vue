@@ -32,7 +32,7 @@ const sidebarNavItemsAdmin: NavItem[] = [
     {
         title: 'Список пользователей',
         href: '/settings/system/users',
-    }
+    },
 ];
 
 const currentPath = window.location.pathname;
@@ -44,7 +44,7 @@ const currentPath = window.location.pathname;
 
         <div class="flex flex-col space-y-8 md:space-y-0 lg:flex-row lg:space-x-12 lg:space-y-0">
             <aside class="w-full max-w-xl lg:w-48">
-                <p class="text-sm opacity-50 ms-4 mb-2">Пользователь</p>
+                <p class="mb-2 ms-4 text-sm opacity-50">Пользователь</p>
                 <nav class="flex flex-col space-x-0 space-y-1">
                     <Button
                         v-for="item in sidebarNavItems"
@@ -58,7 +58,7 @@ const currentPath = window.location.pathname;
                         </Link>
                     </Button>
                 </nav>
-                <p class="text-sm opacity-50 ms-4 mt-8 mb-2">Администрирование</p>
+                <p class="mb-2 ms-4 mt-8 text-sm opacity-50">Администрирование</p>
                 <nav class="flex flex-col space-x-0 space-y-1">
                     <Button
                         v-for="item in sidebarNavItemsAdmin"

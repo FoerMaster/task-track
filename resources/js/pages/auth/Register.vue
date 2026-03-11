@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
+import { getLocalTimeZone } from '@/lib/utils';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
-import { getLocalTimeZone } from '@/lib/utils';
 
 const form = useForm({
     full_name: '',
@@ -30,22 +30,50 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-6">
-
                 <div class="grid gap-2">
                     <Label for="name">ФИО</Label>
-                    <Input id="name" type="text" required autofocus :tabindex="1" autocomplete="name" v-model="form.full_name" placeholder="Фамилия Имя Отчество" />
+                    <Input
+                        id="name"
+                        type="text"
+                        required
+                        autofocus
+                        :tabindex="1"
+                        autocomplete="name"
+                        v-model="form.full_name"
+                        placeholder="Фамилия Имя Отчество"
+                        data-testid="register-full-name"
+                    />
                     <InputError :message="form.errors.full_name" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="name">Имя пользователя</Label>
-                    <Input id="name" type="text" required autofocus :tabindex="1" autocomplete="name" v-model="form.name" placeholder="example_user" />
+                    <Input
+                        id="name"
+                        type="text"
+                        required
+                        autofocus
+                        :tabindex="1"
+                        autocomplete="name"
+                        v-model="form.name"
+                        placeholder="example_user"
+                        data-testid="register-username"
+                    />
                     <InputError :message="form.errors.name" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="email">Адрес электронной почты</Label>
-                    <Input id="email" type="email" required :tabindex="2" autocomplete="email" v-model="form.email" placeholder="email@example.com" />
+                    <Input
+                        id="email"
+                        type="email"
+                        required
+                        :tabindex="2"
+                        autocomplete="email"
+                        v-model="form.email"
+                        placeholder="email@example.com"
+                        data-testid="register-email"
+                    />
                     <InputError :message="form.errors.email" />
                 </div>
 
@@ -59,6 +87,7 @@ const submit = () => {
                         autocomplete="new-password"
                         v-model="form.password"
                         placeholder="Пароль"
+                        data-testid="register-password"
                     />
                     <InputError :message="form.errors.password" />
                 </div>
@@ -73,11 +102,12 @@ const submit = () => {
                         autocomplete="new-password"
                         v-model="form.password_confirmation"
                         placeholder="Подтвердите пароль"
+                        data-testid="register-password-confirmation"
                     />
                     <InputError :message="form.errors.password_confirmation" />
                 </div>
 
-                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="form.processing">
+                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="form.processing" data-testid="register-submit">
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
                     Создать аккаунт
                 </Button>

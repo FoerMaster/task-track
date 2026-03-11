@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
-use Intervention\Image\Laravel\Facades\Image;
 
 class RegisteredUserController extends Controller
 {
@@ -36,7 +35,7 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'timezone' => ['required','string','max:255']
+            'timezone' => ['required', 'string', 'max:255'],
         ]);
 
         $user = User::create([

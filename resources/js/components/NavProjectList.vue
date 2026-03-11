@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
-import { type NavItem, type SharedData } from '@/types';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-vue-next';
 import {
     Dialog,
     DialogClose,
@@ -16,7 +13,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import InputError from '@/components/InputError.vue';
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { PlusCircle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 defineProps<{
@@ -75,6 +75,7 @@ function formatCodeName(event: any) {
                         @click.prevent="creationOpened = true"
                         class="group flex flex-row items-center gap-2 rounded py-1 opacity-50 transition-all hover:bg-secondary hover:opacity-100"
                         :class="open ? 'px-2' : 'justify-center px-1'"
+                        data-testid="project-create-open"
                     >
                         <span class="flex h-6 w-6 flex-row items-center justify-center rounded p-0.5 text-xs text-primary transition-colors"
                             ><PlusCircle
@@ -98,6 +99,7 @@ function formatCodeName(event: any) {
                                 class="mt-1 block w-full"
                                 autocomplete="project-name"
                                 placeholder="Абрис"
+                                data-testid="project-create-name"
                             />
                             <InputError :message="form.errors.name" />
                         </div>
@@ -111,6 +113,7 @@ function formatCodeName(event: any) {
                                 autocomplete="project-code-name"
                                 placeholder="abris"
                                 @input="formatCodeName"
+                                data-testid="project-create-code"
                             />
                             <InputError :message="form.errors.code_name" />
                         </div>
@@ -120,7 +123,7 @@ function formatCodeName(event: any) {
                         <DialogClose as-child>
                             <Button type="button" variant="ghost"> Отмена </Button>
                         </DialogClose>
-                        <Button type="button" @click.prevent="submit"> Создать </Button>
+                        <Button type="button" @click.prevent="submit" data-testid="project-create-submit"> Создать </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

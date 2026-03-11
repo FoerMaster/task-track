@@ -11,7 +11,9 @@ class Project extends Model
     // project_owner - guarded
     // owner, manger, mainter,
     protected $fillable = ['name', 'code_name', 'owner_id'];
+
     protected $hidden = ['pivot'];
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'project_users')
@@ -36,4 +38,3 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 }
-

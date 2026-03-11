@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskCommentController;
 use App\Http\Controllers\TaskController;
-use \App\Http\Controllers\TaskCommentController;
 use App\Http\Resources\TaskShowResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -35,7 +35,7 @@ Route::get('agiles', function (Request $request) {
         ->get();
 
     return Inertia::render('MyKanban', [
-        'tasks' => TaskShowResource::collection($tasks)
+        'tasks' => TaskShowResource::collection($tasks),
     ]);
 })->middleware(['auth', 'verified'])->name('agiles');
 
@@ -56,7 +56,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('attachment', [TaskController::class, 'attachmentadd'])->name('tasks.attachment.add');
         Route::delete('attachment/destroy', [TaskController::class, 'attachmentdestroy'])->name('tasks.attachment.destroy');
     });
-
 
 });
 

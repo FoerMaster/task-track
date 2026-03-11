@@ -17,6 +17,16 @@ Abris — система управления задачами и проекта
 - Vite + Tailwind CSS
 - SQLite/MySQL (на выбор)
 
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" height="32" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" alt="Laravel" height="32" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="Vue" height="32" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" alt="Vite" height="32" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS" height="32" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" height="32" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" height="32" />
+</p>
+
 ## Требования
 - PHP 8.2+
 - Composer
@@ -53,6 +63,12 @@ vendor/bin/pint --test
 npm run format:check
 npm run lint
 ./vendor/bin/pest
+```
+
+## E2E
+```bash
+npx playwright install
+npm run e2e
 ```
 
 ## Конфигурация

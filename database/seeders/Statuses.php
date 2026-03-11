@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Status;
+use Illuminate\Database\Seeder;
 
 class Statuses extends Seeder
 {
@@ -15,32 +14,32 @@ class Statuses extends Seeder
     {
         Status::create(
             [
-                'name' => "Backlog"
+                'name' => 'Backlog',
             ]
         );
         Status::create(
             [
-                'name' => "To do"
+                'name' => 'To do',
             ]
         );
         Status::create(
             [
-                'name' => "In Progress"
+                'name' => 'In Progress',
             ]
         );
         Status::create(
             [
-                'name' => "In Review"
+                'name' => 'In Review',
             ]
         );
         Status::create(
             [
-                'name' => "Done"
+                'name' => 'Done',
             ]
         );
         Status::create(
             [
-                'name' => "Canceled"
+                'name' => 'Canceled',
             ]
         );
     }

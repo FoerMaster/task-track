@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import TaskRow from '@/components/TaskRow.vue';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem, Task } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
-import { Button } from '@/components/ui/button';
-import TaskRow from '@/components/TaskRow.vue';
 import { computed } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -14,12 +14,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const props = defineProps<{
-    user: any
-    tasks: Task[],
-    totalItems: number,
-    prePage: number,
-    currentPage: number
-}>()
+    user: any;
+    tasks: Task[];
+    totalItems: number;
+    prePage: number;
+    currentPage: number;
+}>();
 
 const taskList = computed(() => props.tasks);
 
@@ -57,52 +57,25 @@ const pagesToShow = computed(() => {
         </div>
 
         <!-- Пагинатор -->
-        <div class="flex justify-center items-center gap-2 mt-4">
+        <div class="mt-4 flex items-center justify-center gap-2">
             <!-- Кнопка "Первая" -->
-            <Button
-                @click="goToPage(1)"
-                :disabled="currentPage === 1"
-                variant="outline"
-            >
-                Первая
-            </Button>
+            <Button @click="goToPage(1)" :disabled="currentPage === 1" variant="outline"> Первая </Button>
 
             <!-- Кнопка "Назад" -->
-            <Button
-                @click="goToPage(currentPage - 1)"
-                :disabled="currentPage === 1"
-                variant="outline"
-            >
-                Назад
-            </Button>
+            <Button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" variant="outline"> Назад </Button>
 
             <!-- Кнопки с номерами страниц -->
             <template v-for="page in pagesToShow" :key="page">
-                <Button
-                    @click="goToPage(page)"
-                    :variant="page === currentPage ? 'primary' : 'outline'"
-                >
+                <Button @click="goToPage(page)" :variant="page === currentPage ? 'primary' : 'outline'">
                     {{ page }}
                 </Button>
             </template>
 
             <!-- Кнопка "Вперед" -->
-            <Button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage === totalPages"
-                variant="outline"
-            >
-                Вперед
-            </Button>
+            <Button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" variant="outline"> Вперед </Button>
 
             <!-- Кнопка "Последняя" -->
-            <Button
-                @click="goToPage(totalPages)"
-                :disabled="currentPage === totalPages"
-                variant="outline"
-            >
-                Последняя
-            </Button>
+            <Button @click="goToPage(totalPages)" :disabled="currentPage === totalPages" variant="outline"> Последняя </Button>
         </div>
     </AppLayout>
 </template>

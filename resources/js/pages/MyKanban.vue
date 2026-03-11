@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem, Task } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
-import { computed, ref, onMounted, watch } from 'vue';
-import { usePage } from '@inertiajs/vue3';
 import { getProjectById, getUserById } from '@/lib/utils';
+import { type BreadcrumbItem, Task } from '@/types';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { computed, onMounted, ref, watch } from 'vue';
 import { formatDate } from '../lib/datetime';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Задачи', href: '/dashboard' },
-    { title: 'Kanban', href: '/tasks/kanban' }
+    { title: 'Kanban', href: '/tasks/kanban' },
 ];
 
 const props = defineProps<{
@@ -26,15 +25,20 @@ const page = usePage<{
 const searchQuery = ref('');
 const selectedProject = ref('all');
 
-const filteredTasks = computed(() => {
-    return props.tasks.filter(task => {
-        const matchesSearch =
-            searchQuery.value === '' ||
-            task.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+const localTasks = ref<Task[]>([...props.tasks]);
 
-        const matchesProject =
-            selectedProject.value === 'all' ||
-            task.project_id.toString() === selectedProject.value;
+watch(
+    () => props.tasks,
+    (newTasks) => {
+        localTasks.value = [...newTasks];
+    },
+);
+
+const filteredTasks = computed(() => {
+    return localTasks.value.filter((task) => {
+        const matchesSearch = searchQuery.value === '' || task.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+
+        const matchesProject = selectedProject.value === 'all' || task.project_id.toString() === selectedProject.value;
 
         return matchesSearch && matchesProject;
     });
@@ -43,30 +47,17 @@ const filteredTasks = computed(() => {
 const tasksByStatus = computed(() => {
     const grouped: Record<number, Task[]> = {};
 
-    page.props.auth.statuses.forEach(status => {
+    page.props.auth.statuses.forEach((status) => {
         grouped[status.id] = [];
     });
 
-    filteredTasks.value.forEach(task => {
+    filteredTasks.value.forEach((task) => {
         if (grouped[task.status]) {
             grouped[task.status].push(task);
         }
     });
 
     return grouped;
-});
-
-const projects = computed(() => {
-    const uniqueProjects = new Map();
-
-    props.tasks.forEach(task => {
-        const project = getProjectById(task.project_id);
-        if (project) {
-            uniqueProjects.set(project.id, project);
-        }
-    });
-
-    return Array.from(uniqueProjects.values());
 });
 
 const draggedTask = ref<Task | null>(null);
@@ -97,11 +88,7 @@ function onDragOver(event: DragEvent, statusId: number) {
 }
 
 function onDragLeave(event: DragEvent) {
-    if (
-        event.relatedTarget &&
-        event.currentTarget &&
-        !(event.currentTarget as Node).contains(event.relatedTarget as Node)
-    ) {
+    if (event.relatedTarget && event.currentTarget && !(event.currentTarget as Node).contains(event.relatedTarget as Node)) {
         dragOverStatus.value = null;
     }
 }
@@ -110,9 +97,9 @@ function onDrop(statusId: number) {
     if (draggedTask.value && draggedTask.value.status !== statusId) {
         const updatedTask = { ...draggedTask.value, status: statusId };
 
-        const taskIndex = props.tasks.findIndex(t => t.id === draggedTask.value?.id);
+        const taskIndex = localTasks.value.findIndex((t) => t.id === draggedTask.value?.id);
         if (taskIndex !== -1) {
-            props.tasks[taskIndex] = updatedTask;
+            localTasks.value[taskIndex] = updatedTask;
 
             router.patch(route('tasks.update', draggedTask.value.id), {
                 status: statusId,
@@ -130,11 +117,7 @@ function onDragEnd() {
 }
 
 function renderGhostTask(statusId: number) {
-    return (
-        draggedTask.value &&
-        dragOverStatus.value === statusId &&
-        draggedTask.value.status !== statusId
-    );
+    return draggedTask.value && dragOverStatus.value === statusId && draggedTask.value.status !== statusId;
 }
 
 function getDeadlineStatus(task: Task) {
@@ -174,7 +157,7 @@ onMounted(() => {
     if (stored) {
         collapsedColumns.value = JSON.parse(stored);
     } else {
-        page.props.auth.statuses.forEach(status => {
+        page.props.auth.statuses.forEach((status) => {
             collapsedColumns.value[status.id] = false;
         });
     }
@@ -186,10 +169,10 @@ function toggleCollapse(statusId: number) {
 
 watch(
     collapsedColumns,
-    newVal => {
+    (newVal) => {
         localStorage.setItem('collapsedColumns', JSON.stringify(newVal));
     },
-    { deep: true }
+    { deep: true },
 );
 </script>
 
@@ -216,10 +199,7 @@ watch(
                             <h3 class="font-medium" v-else>
                                 {{ status.name.charAt(0) }}
                             </h3>
-                            <button
-                                @click="toggleCollapse(status.id)"
-                                class="text-xs text-muted-foreground focus:outline-none"
-                            >
+                            <button @click="toggleCollapse(status.id)" class="text-xs text-muted-foreground focus:outline-none">
                                 <span v-if="collapsedColumns[status.id]">Развернуть</span>
                                 <span v-else>Свернуть</span>
                             </button>
@@ -231,7 +211,7 @@ watch(
                     <div v-if="!collapsedColumns[status.id]" class="flex flex-col gap-2">
                         <div
                             v-if="renderGhostTask(status.id)"
-                            class="flex flex-col gap-2 rounded-lg bg-background/70 p-3 shadow-sm border-2 border-dashed border-primary/50 animate-pulse"
+                            class="flex animate-pulse flex-col gap-2 rounded-lg border-2 border-dashed border-primary/50 bg-background/70 p-3 shadow-sm"
                         >
                             <div class="flex flex-row items-center justify-between">
                                 <span class="text-xs text-muted-foreground">
@@ -243,14 +223,11 @@ watch(
                                 {{ draggedTask?.name }}
                             </div>
                             <div class="flex flex-wrap gap-1 opacity-70">
-                                <div
-                                    v-if="draggedTask?.executors && draggedTask.executors.length > 0"
-                                    class="flex"
-                                >
+                                <div v-if="draggedTask?.executors && draggedTask.executors.length > 0" class="flex">
                                     <div
                                         v-for="userId in draggedTask.executors.slice(0, 3)"
                                         :key="userId"
-                                        class="h-6 w-6 rounded-full bg-primary/20 text-xs flex items-center justify-center overflow-hidden"
+                                        class="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-primary/20 text-xs"
                                     >
                                         <img
                                             v-if="getUserById(userId)?.avatar"
@@ -264,7 +241,7 @@ watch(
                                     </div>
                                     <div
                                         v-if="draggedTask.executors.length > 3"
-                                        class="h-6 w-6 rounded-full bg-muted text-xs flex items-center justify-center"
+                                        class="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs"
                                     >
                                         +{{ draggedTask.executors.length - 3 }}
                                     </div>
@@ -282,8 +259,8 @@ watch(
                         >
                             <a :href="route('tasks.show', task.id)" target="_blank" class="block">
                                 <div
-                                    class="flex flex-col gap-2 rounded-lg bg-background p-3 shadow-sm border"
-                                    :class="[ task.status == 5 && 'opacity-60', getDeadlineClass(task) ]"
+                                    class="flex flex-col gap-2 rounded-lg border bg-background p-3 shadow-sm"
+                                    :class="[task.status == 5 && 'opacity-60', getDeadlineClass(task)]"
                                 >
                                     <div class="flex flex-row items-center justify-between">
                                         <span class="text-xs text-muted-foreground">
@@ -298,16 +275,13 @@ watch(
                                     </div>
                                     <div class="flex items-center justify-between text-xs text-muted-foreground">
                                         <div class="flex items-center">
-                                            <div
-                                                v-if="task.executors && task.executors.length > 0"
-                                                class="flex"
-                                            >
+                                            <div v-if="task.executors && task.executors.length > 0" class="flex">
                                                 <div
                                                     v-for="(userId, index) in task.executors.slice(0, 3)"
                                                     :key="userId"
-                                                    class="h-6 w-6 rounded-full bg-primary/20 text-xs flex items-center justify-center overflow-hidden"
+                                                    class="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-primary/20 text-xs"
                                                     :title="getUserById(userId)?.full_name"
-                                                    :style="{'margin-left': index === 0 ? '0' : '-8px'}"
+                                                    :style="{ 'margin-left': index === 0 ? '0' : '-8px' }"
                                                 >
                                                     <img
                                                         v-if="getUserById(userId)?.avatar"
@@ -321,25 +295,23 @@ watch(
                                                 </div>
                                                 <div
                                                     v-if="task.executors.length > 3"
-                                                    class="h-6 w-6 rounded-full bg-muted text-xs flex items-center justify-center -ml-2"
+                                                    class="-ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs"
                                                 >
                                                     +{{ task.executors.length - 3 }}
                                                 </div>
                                             </div>
-                                            <div v-else class="text-xs text-muted-foreground">
-                                                Нет исполнителей
-                                            </div>
+                                            <div v-else class="text-xs text-muted-foreground">Нет исполнителей</div>
                                         </div>
                                         <span>{{ getUserById(task.create_from)?.full_name }}</span>
                                     </div>
                                     <div
                                         v-if="task.deadline"
-                                        class="text-xs mt-1"
+                                        class="mt-1 text-xs"
                                         :class="{
                                             'text-red-500 dark:text-red-400': getDeadlineStatus(task) === 'overdue',
                                             'text-orange-500 dark:text-orange-400': getDeadlineStatus(task) === 'today',
                                             'text-yellow-500 dark:text-yellow-400': getDeadlineStatus(task) === 'tomorrow',
-                                            'text-muted-foreground': getDeadlineStatus(task) === 'normal'
+                                            'text-muted-foreground': getDeadlineStatus(task) === 'normal',
                                         }"
                                     >
                                         Срок: {{ formatDate(task.deadline) }}
@@ -374,7 +346,8 @@ watch(
 }
 
 @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
         opacity: 1;
     }
     50% {

@@ -8,7 +8,6 @@ use App\Models\ProjectRoles;
 use App\Models\Status;
 use App\Models\TaskType;
 use App\Models\User;
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -57,7 +56,7 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => $authProps,
             'flash' => [
-                'message' => fn () => $request->session()->get('message')
+                'message' => fn () => $request->session()->get('message'),
             ],
         ];
     }

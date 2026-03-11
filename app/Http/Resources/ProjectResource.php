@@ -2,9 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\ProjectRoles;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProjectResource extends JsonResource
 {
@@ -17,13 +16,13 @@ class ProjectResource extends JsonResource
             'additional' => $this->additional,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'participants' => $this->whenLoaded('users', function() {
-                return $this->users->map(function($user) {
+            'participants' => $this->whenLoaded('users', function () {
+                return $this->users->map(function ($user) {
                     return [
                         'user' => new UserResource($user),
                         'role' => new RoleResource(
                             ProjectRoles::find($user->pivot->role_id)
-                        )
+                        ),
                     ];
                 });
             }),

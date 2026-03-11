@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\TaskType;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TaskTypes extends Seeder
@@ -14,10 +13,10 @@ class TaskTypes extends Seeder
     public function run(): void
     {
         TaskType::create([
-            'name' => "Feature request"
+            'name' => 'Feature request',
         ]);
         TaskType::create([
-            'name' => "Bug"
+            'name' => 'Bug',
         ]);
     }
 }
