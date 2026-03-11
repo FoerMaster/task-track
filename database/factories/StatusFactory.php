@@ -1,0 +1,21 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Status;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Status>
+ */
+class StatusFactory extends Factory
+{
+    protected $model = Status::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->randomElement(['To Do', 'In Progress', 'In Review', 'Done']),
+        ];
+    }
+}
