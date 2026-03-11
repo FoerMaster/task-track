@@ -108,7 +108,6 @@ function onDragLeave(event: DragEvent) {
 
 function onDrop(statusId: number) {
     if (draggedTask.value && draggedTask.value.status !== statusId) {
-        console.log(`Moving task ${draggedTask.value.id} to status ${statusId}`);
         const updatedTask = { ...draggedTask.value, status: statusId };
 
         const taskIndex = props.tasks.findIndex(t => t.id === draggedTask.value?.id);

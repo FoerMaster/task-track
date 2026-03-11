@@ -1,11 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "abris/abris",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Abris — team task and project management.",
     "keywords": [
+        "abris",
+        "tasks",
+        "projects",
         "laravel",
-        "framework"
+        "inertia",
+        "vue"
     ],
     "license": "MIT",
     "require": {

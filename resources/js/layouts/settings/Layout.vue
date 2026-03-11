@@ -58,7 +58,6 @@ const currentPath = window.location.pathname;
                         </Link>
                     </Button>
                 </nav>
-<!--                TODO: СПРЯТАТЬ ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ СИСТЕМНЫЙ АДМИНИСТРАТОР-->
                 <p class="text-sm opacity-50 ms-4 mt-8 mb-2">Администрирование</p>
                 <nav class="flex flex-col space-x-0 space-y-1">
                     <Button

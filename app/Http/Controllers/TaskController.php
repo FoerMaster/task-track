@@ -46,7 +46,18 @@ class TaskController extends Controller
             'executors' => 'nullable|array',
             'executors.*' => 'exists:users,id',
             'files' => 'nullable|array',
-            'files.*' => 'file|max:4096|not_in:php,phar,html,htm,js,exe,bat,sh,phtml,asp,aspx,jsp,jar',
+            'files.*' => [
+                'file',
+                'max:4096',
+                function ($attribute, $value, $fail) {
+                    $forbiddenExtensions = ['php', 'phar', 'html', 'htm', 'js', 'exe', 'bat', 'sh', 'phtml', 'asp', 'aspx', 'jsp', 'jar'];
+                    $extension = strtolower($value->getClientOriginalExtension());
+
+                    if (in_array($extension, $forbiddenExtensions, true)) {
+                        $fail("Файлы с расширением .$extension запрещены!");
+                    }
+                },
+            ],
         ], [
             'name.required' => 'Название задачи обязательно для заполнения.',
             'name.string' => 'Название задачи должно быть строкой.',
@@ -89,26 +100,18 @@ class TaskController extends Controller
             $task->executors()->attach($request->executors);
         }
 
-        $uploadedFiles = [];
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $fileName = uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('uploads', $fileName, 'public');
 
-        foreach ($request->file('files') as $file) {
-            // Генерируем уникальное имя файла
-            $fileName = uniqid() . '_' . $file->getClientOriginalName();
-
-            // Сохраняем файл в storage/app/public/uploads
-            $path = $file->storeAs('uploads', $fileName, 'public');
-
-            // Получаем публичный URL
-            //$url = Storage::disk('public')->url($path, );
-
-            // Сохраняем в базу данных
-            TaskAttach::create([
-                'task_id' => $task->id,
-                'file_name' => $file->getClientOriginalName(),
-                'attachment_url' =>  'storage/' . $path,
-            ]);
+                TaskAttach::create([
+                    'task_id' => $task->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'attachment_url' => 'storage/' . $path,
+                ]);
+            }
         }
-//        $task->save();
 
         return redirect()->route('tasks.show', $task);
     }
@@ -203,37 +206,27 @@ class TaskController extends Controller
 
     public function attachmentadd(Request $request)
     {
-        $uploadedFiles = [];
+        $request->validate([
+            'task_id' => 'required|exists:tasks,id',
+            'files' => 'required|array',
+            'files.*' => [
+                'file',
+                'max:2048',
+                function ($attribute, $value, $fail) {
+                    $forbiddenExtensions = ['php', 'phar', 'html', 'htm', 'js', 'exe', 'bat', 'sh', 'phtml', 'asp', 'aspx', 'jsp', 'jar'];
+                    $extension = strtolower($value->getClientOriginalExtension());
+
+                    if (in_array($extension, $forbiddenExtensions, true)) {
+                        $fail("Файлы с расширением .$extension запрещены!");
+                    }
+                },
+            ],
+        ]);
 
         foreach ($request->file('files') as $file) {
-            // Генерируем уникальное имя файла
-            $request->validate([
-                'task_id' => 'required|exists:tasks,id',
-                'files' => 'nullable|array',
-                'files.*' => [
-                    'required',
-                    'file',
-                    'max:2048',
-                    // Запрещаем расширения через closure
-                    function ($attribute, $value, $fail) {
-                        $forbiddenExtensions = ['php', 'html', 'js', 'exe', 'bat', 'sh'];
-                        $extension = strtolower($value->getClientOriginalExtension());
-
-                        if (in_array($extension, $forbiddenExtensions)) {
-                            $fail("Файлы с расширением .$extension запрещены!");
-                        }
-                    },
-                ],
-            ]);
             $fileName = uniqid() . '_' . $file->getClientOriginalName();
-
-            // Сохраняем файл в storage/app/public/uploads
             $path = $file->storeAs('uploads', $fileName, 'public');
 
-            // Получаем публичный URL
-            //$url = Storage::disk('public')->url($path, );
-
-            // Сохраняем в базу данных
             TaskAttach::create([
                 'task_id' => $request->task_id,
                 'file_name' => $file->getClientOriginalName(),
@@ -241,18 +234,27 @@ class TaskController extends Controller
             ]);
         }
 
-        return back();
+        return back()->with('message', 'Файлы добавлены');
     }
 
     public function attachmentdestroy(Request $request)
     {
+        $request->validate([
+            'attachment_id' => 'required|exists:task_attaches,id',
+        ]);
 
         $attach = TaskAttach::find($request->attachment_id);
 
-        Storage::disk('public')->delete(str_replace('storage/', '',$attach->attachment_url));
-        $attach->delete();
-        /// storage/uploads/67d85eef265b4_20101219200306!Stockbroker's_Scarf.png
-        //TaskAttach::destroy($request->id);
+        if (!$attach) {
+            return back()->with('error', 'Вложение не найдено');
+        }
 
+        if ($attach->attachment_url) {
+            Storage::disk('public')->delete(str_replace('storage/', '', $attach->attachment_url));
+        }
+
+        $attach->delete();
+
+        return back()->with('message', 'Вложение удалено');
     }
 }

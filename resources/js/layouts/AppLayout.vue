@@ -20,7 +20,6 @@ const flash = computed(() => usePage().props.flash);
 watch(
     () => flash.value,
     (newVal) => {
-        console.log(newVal)
         if (newVal.message) {
             toast({
                 title: 'Успешно',
