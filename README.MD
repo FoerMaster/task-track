@@ -1,6 +1,5 @@
 # Abris
 
-[![Lint](https://github.com/FoerMaster/task-track/actions/workflows/lint.yml/badge.svg)](https://github.com/FoerMaster/task-track/actions/workflows/lint.yml)
 [![Tests](https://github.com/FoerMaster/task-track/actions/workflows/tests.yml/badge.svg)](https://github.com/FoerMaster/task-track/actions/workflows/tests.yml)
 
 Abris — система управления задачами и проектами для командной работы. Проекты, роли, канбан‑доски и комментарии к задачам в одном приложении.
